@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="title" type="java.lang.String" value="Stats Graph Controller"/>
+    <Property name="resizable" type="boolean" value="false"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="lblStatsGraphController" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="140" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="btnDataCulling" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="lblMaxEntries" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="txtMaxCullingEntries" min="-2" pref="42" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="btnAutoRunPeriodicMethod" max="32767" attributes="0"/>
+                                  <Component id="btnAutoSaveStats" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="btnAutoWriteData" alignment="0" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lblEveryAutoSave" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblEveryAutoWrite" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblEveryAutoRunMethod" alignment="1" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="txtAutoRunMethod" max="32767" attributes="0"/>
+                                  <Component id="txtSaveStatsEveryXRounds" pref="42" max="32767" attributes="0"/>
+                                  <Component id="txtWriteDataEveryXRounds" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lblRoundsAutoRunMethod" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblRoundsAutoSave" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblRoundsAutoWrite" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Component id="btnAutoPrintGraphs" min="-2" pref="137" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblEveryAutoPrint" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="txtPrintRoundsEveryXRounds" min="-2" pref="41" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="lblRoundsAutoPrint" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="btnPrintGraphsToPDF" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="btnUpdateStats" max="32767" attributes="1"/>
+                          <Component id="btnResetGraphs" alignment="0" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="btnRunStats" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="btnAutoUpdateGraphs" min="-2" pref="150" max="-2" attributes="1"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="lblEveryUpdateGraphs" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="txtUpdateGraphEveryXRounds" min="-2" pref="41" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="lblRoundsUpdateGraphs" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="lblStatsGraphController" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnRunStats" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnUpdateStats" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnResetGraphs" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAutoUpdateGraphs" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtUpdateGraphEveryXRounds" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblEveryUpdateGraphs" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblRoundsUpdateGraphs" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnPrintGraphsToPDF" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAutoPrintGraphs" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtPrintRoundsEveryXRounds" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblRoundsAutoPrint" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblEveryAutoPrint" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnAutoSaveStats" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblEveryAutoSave" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtSaveStatsEveryXRounds" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblRoundsAutoSave" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnAutoWriteData" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtWriteDataEveryXRounds" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblEveryAutoWrite" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblRoundsAutoWrite" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnAutoRunPeriodicMethod" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtAutoRunMethod" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblEveryAutoRunMethod" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblRoundsAutoRunMethod" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnDataCulling" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblMaxEntries" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtMaxCullingEntries" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="38" max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JButton" name="btnResetGraphs">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Reset Graphs"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetGraphsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblStatsGraphController">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Stats Graph Controller"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnUpdateStats">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Update Stats"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateStatsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnAutoUpdateGraphs">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auto-Update Graphs"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAutoUpdateGraphsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnRunStats">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Activate Statistics (including graphs)"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRunStatsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnPrintGraphsToPDF">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Print Graphs now"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPrintGraphsToPDFActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnAutoPrintGraphs">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auto-Print Graphs"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAutoPrintGraphsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtPrintRoundsEveryXRounds">
+      <Events>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtPrintRoundsEveryXRoundsKeyReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblRoundsAutoPrint">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="rounds"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblEveryAutoPrint">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="every"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnDataCulling">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Dyn. data culling"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDataCullingActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtMaxCullingEntries">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="1000"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtMaxCullingEntriesKeyReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblMaxEntries">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="max. entries:"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnAutoRunPeriodicMethod">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auto-run periodic method"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAutoRunPeriodicMethodActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblEveryAutoRunMethod">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="every"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtAutoRunMethod">
+      <Events>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtAutoRunMethodKeyReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblRoundsAutoRunMethod">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="rounds"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnAutoSaveStats">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auto-Save Stats Form"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAutoSaveStatsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblEveryAutoSave">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="every"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtSaveStatsEveryXRounds">
+      <Events>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtSaveStatsEveryXRoundsKeyReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblRoundsAutoSave">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="rounds"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnAutoWriteData">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auto-Collect Data for CSV file"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAutoWriteDataActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtWriteDataEveryXRounds">
+      <Events>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtWriteDataEveryXRoundsKeyReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblEveryAutoWrite">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="every"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblRoundsAutoWrite">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="rounds"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtUpdateGraphEveryXRounds">
+      <Events>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtUpdateGraphEveryXRoundsKeyReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblEveryUpdateGraphs">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="every"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblRoundsUpdateGraphs">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="rounds"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>
