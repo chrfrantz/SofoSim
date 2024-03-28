@@ -21,10 +21,25 @@ import org.sofosim.environment.stats.StatsCalculator;
  */
 public abstract class ForgetfulMemory<K,V extends Number> implements AssociativeMemoryInterface<K, V>{
 
+	/**
+	 * Owning agent
+	 */
 	protected String owner = "";
+
+	/**
+	 * Actual memory structure
+	 */
 	protected LinkedHashMap<K, V> memory = new LinkedHashMap<>();
+
+	/**
+	 * Constants to indicate standard deviation
+	 */
 	protected static final String STDDEV = "STDDEV";
-	
+
+	/**
+	 * Indicates whether memory contains entries.
+	 * @return
+	 */
 	@Override
 	public boolean hasEntries(){
 		return !memory.isEmpty();
@@ -121,15 +136,21 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 		}
 		return results;
 	}
-	
+
+	/**
+	 * Returns (first) memory entry that has the highest associated value.
+	 * @return
+	 */
 	@Override
 	public Entry<K, V> getEntryForHighestValue() {
 		float highestVal = -Float.MAX_VALUE;
 		Entry<K, V> highest = null;
+		// Create a copy prior to iteration
 		final LinkedHashMap<K, V> memoryCopy = new LinkedHashMap<>();
 		for(Entry<K,V> entry0: memory.entrySet()){
 			memoryCopy.put(entry0.getKey(), entry0.getValue());
 		}
+		// Iterate through memory entries to determine highest value
 		for(Entry<K, V> entry: memoryCopy.entrySet()){
 			if(entry.getValue().floatValue() > highestVal){
 				highestVal = entry.getValue().floatValue();
@@ -139,14 +160,20 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 		return highest;
 	}
 
+	/**
+	 * Returns (first) memory entry that has the lowest (i.e., lowest positive/highest negative) associated value.
+	 * @return
+	 */
 	@Override
 	public Entry<K, V> getEntryForLowestValue() {
-		Float lowestVal = Float.MAX_VALUE;
+		float lowestVal = Float.MAX_VALUE;
 		Entry<K, V> lowest = null;
+		// Create a copy prior to iteration
 		final LinkedHashMap<K, V> memoryCopy = new LinkedHashMap<>();
 		for(Entry<K,V> entry0: memory.entrySet()){
 			memoryCopy.put(entry0.getKey(), entry0.getValue());
 		}
+		// Iterate through memory entries to determine lowest value
 		for(Entry<K, V> entry: memoryCopy.entrySet()){
 			if(entry.getValue().floatValue() < lowestVal){
 				lowestVal = entry.getValue().floatValue();
@@ -163,7 +190,7 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	 * @return
 	 */
 	public static Entry<String, Float> getEntryForHighestValue(final HashMap<String, Float> map) {
-		Float highestVal = -Float.MAX_VALUE;
+		float highestVal = -Float.MAX_VALUE;
 		Entry<String, Float> highest = null;
 		for(Entry<String, Float> entry: map.entrySet()){
 			if(entry.getValue() > highestVal){
@@ -181,7 +208,7 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	 * @return
 	 */
 	public static Entry<String, Float> getEntryForLowestValue(final HashMap<String, Float> map) {
-		Float lowestVal = Float.MAX_VALUE;
+		float lowestVal = Float.MAX_VALUE;
 		Entry<String, Float> lowest = null;
 		for(Entry<String, Float> entry: map.entrySet()){
 			if(entry.getValue() < lowestVal){
@@ -261,7 +288,7 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 		} else if(firstMemory.getClass().equals(CountingDiscountingMemory.class)){
 			return CountingDiscountingMemory.mergeCountingMemories(((CountingDiscountingMemory)firstMemory), ((CountingDiscountingMemory)secondMemory), false);
 		} else if(firstMemory.getClass().equals(DiscreteNonAggregatingMemory.class)){
-			return new DiscreteNonAggregatingMemory(integratedMap, firstMemory.getNumberOfEntries(), firstMemory.owner);
+			return new DiscreteNonAggregatingMemory(integratedMap, firstMemory.getNumberOfEntries(), firstMemory.getOwner());
 		} else {
 			throw new RuntimeException("Merging of unknown memory type requested. Type: " + firstMemory.getClass().getSimpleName());
 		}
@@ -412,7 +439,10 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	public String getOwner(){
 		return this.owner;
 	}
-	
+
+	/**
+	 * Returns human-readable stringified content of memory.
+	 */
 	@Override
 	public String toString(){
 		return owner + "'s memory: " + memory.size() + " entries, mean: " + getMeanOfAllEntries() + ", values: " + memory.toString();

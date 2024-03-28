@@ -536,7 +536,7 @@ public abstract class Statistics implements Steppable {
         this.statsCalculator = new StatsCalculator();
     }
     
-    StatsForm statsForm = null;
+    private StatsForm statsForm = null;
     
     /** parameter writer for stats */
     private StatsParamWriter paramWriter = null;
@@ -565,7 +565,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Sets up stats form for textual output.
+     * Sets up StatsForm for textual output.
      */
     private void setupStatsForm(){
         if(showStatsForm){
@@ -579,7 +579,10 @@ public abstract class Statistics implements Steppable {
             System.out.println("Note that StatsForm is deactivated.");
         }
     }
-    
+
+    /**
+     * Properly destroys StatsForm.
+     */
     private void destroyStatsForm(){
         if(statsForm != null){
             if(manageWindowsUsingPositionSaver){
@@ -2406,7 +2409,7 @@ public abstract class Statistics implements Steppable {
      * 
      * Note: If adding entries to round buffer, a line break is automatically appended. Also, 
      * entries are NOT added to structured map (which is delivered to stats listeners).
-     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, boolean, boolean, boolean) 
+     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, String, boolean, boolean, boolean)
      * as alternative 
      */
     public void addDataSeriesEntryForCurrentRound(final String chartDataKey, final String seriesName, final Number yValue, final boolean printIntoFile, final boolean addToRoundBuffer){
@@ -2424,7 +2427,7 @@ public abstract class Statistics implements Steppable {
      * 
      * Note: If adding entries to round buffer, a line break is automatically appended. Also, 
      * entries are NOT added to structured map (which is delivered to stats listeners).
-     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, boolean, boolean, boolean) 
+     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, String, boolean, boolean, boolean)
      * as alternative 
      */
     public void addDataSeriesEntryForCurrentRound(final String chartDataKey, final String seriesName, final Float yValue, final boolean printIntoFile, final boolean addToRoundBuffer){
@@ -2442,7 +2445,7 @@ public abstract class Statistics implements Steppable {
      * 
      * Note: If adding entries to round buffer, a line break is automatically appended. Also, 
      * entries are NOT added to structured map (which is delivered to stats listeners).
-     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, boolean, boolean, boolean) 
+     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, String, boolean, boolean, boolean)
      * as alternative 
      */
     public void addDataSeriesEntryForCurrentRound(final String chartDataKey, final String seriesName, final Double yValue, final boolean printIntoFile, final boolean addToRoundBuffer){
@@ -2460,7 +2463,7 @@ public abstract class Statistics implements Steppable {
      * 
      * Note: If adding entries to round buffer, a line break is automatically appended. Also, 
      * entries are NOT added to structured map (which is delivered to stats listeners).
-     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, boolean, boolean, boolean) 
+     * @see #addDataSeriesEntryForCurrentRound(String, String, Number, boolean, String, boolean, boolean, boolean)
      * as alternative 
      */
     public void addDataSeriesEntryForCurrentRound(final String chartDataKey, final String seriesName, final Long yValue, final boolean printIntoFile, final boolean addToRoundBuffer){
@@ -2808,7 +2811,7 @@ public abstract class Statistics implements Steppable {
     
     /**
      * Deregisters given frames from periodic printing.
-     * @param frame
+     * @param frames
      */
     public void deregisterFromPrinting(ArrayList<JFrame> frames){
         for(int i = 0; i < frames.size(); i++){
@@ -2818,7 +2821,7 @@ public abstract class Statistics implements Steppable {
     
     /**
      * Deregisters a given frames from periodic printing.
-     * @param frame
+     * @param frames
      */
     public void deregisterFromPrinting(Collection<JFrame> frames){
         for(JFrame frame: frames){
@@ -2953,7 +2956,7 @@ public abstract class Statistics implements Steppable {
      * @param chart Chart to be printed
      * @param width Width of chart
      * @param height Height of chart
-     * @param imageFormat Image format to be used as output. Defaults to {@link GraphsPrinter.IMAGE_FORMAT_DEFAULT}.
+     * @param imageFormat Image format to be used as output. Defaults to {@link GraphsPrinter IMAGE_FORMAT_DEFAULT}.
      */
     private void printChart(JFreeChart chart, int width, int height, String imageFormat, String givenFilename){
         if(printer != null){
@@ -2973,7 +2976,7 @@ public abstract class Statistics implements Steppable {
      * initialization information and frame title (if no explicit filename specified).
      * @param frame Frame to be printed
      * @param useJRobot Use of JRobot for frame printing (or using Graphics2D.print() method)
-     * @param imageFormat Image format to be printed to. If set to null, it defaults to {@link GraphsPrinter.IMAGE_FORMAT_DEFAULT}.
+     * @param imageFormat Image format to be printed to. If set to null, it defaults to {@link GraphsPrinter IMAGE_FORMAT_DEFAULT}.
      * @param filename Core filename to be printed on output (may amended as part of method)
      */
     private void printFrameActually(final JFrame frame, final boolean useJRobot, String imageFormat, final String filename){
@@ -3195,7 +3198,7 @@ public abstract class Statistics implements Steppable {
      *         with short version of simulation class name (after time 
      *         prefix if activated using {@link #prefixSubfolderWithTime}).
      *         Format: "simClassName_"
-     * @param createShortFolderNameAndSeparateTagFolderInstead Creates 
+     * @param shortFolderNameAndSeparateTagFolderInstead Creates
      *         separate tag folder with full path name but saves result 
      *         in folder that has a short version of the original folder 
      *         name only containing the same timestamp. Purpose of this 
@@ -3455,7 +3458,7 @@ public abstract class Statistics implements Steppable {
      * @param headerField description (header) for the value
      * @param content actual value
      * @param newline indicates if a line break should be produced after the entry
-     * @param onlyLineBreak Indicates if only line break should be added - ignoring all other parameters
+     * @param onlyLineBreak Indicates if only line break should be added - ignoring all other parameter input
      */
     public void appendToFile(String headerField, String content, boolean newline, boolean onlyLineBreak){
         if(statsWriter != null && collectDataThisRound){
@@ -3586,7 +3589,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)})
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)})
      * but neither adds a new header nor a line break at the end of the provided content.
      * @param content
      */
@@ -3597,7 +3600,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)})
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)})
      * but neither adds a new header nor a line break at the end of the provided content.
      * @param content
      */
@@ -3608,7 +3611,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)})
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)})
      * but neither adds a new header nor a line break at the end of the provided content.
      * @param content
      */
@@ -3619,7 +3622,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)})
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)})
      * but neither adds a new header nor a line break at the end of the provided content.
      * @param content
      */
@@ -3630,7 +3633,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)})
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)})
      * but neither adds a new header nor a line break at the end of the provided content.
      * @param content
      */
@@ -3641,7 +3644,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}) 
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)})
      * but neither adds a new header nor a line break at the end of the 
      * provided content.
      * @param content
@@ -3653,7 +3656,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Does not add header but allows to add content and specification of 
      * new line. For producing a line break, simply set content to null and 
      * newLine to true.
@@ -3667,7 +3670,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Does not add header but allows to add content and specification of 
      * new line. For producing a line break, simply set content to null and 
      * newLine to true.
@@ -3681,7 +3684,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Does not add header but allows to add content and specification of 
      * new line. For producing a line break, simply set content to null and 
      * newLine to true.
@@ -3695,7 +3698,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Does not add header but allows to add content and specification of 
      * new line. For producing a line break, simply set content to null and 
      * newLine to true.
@@ -3709,7 +3712,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Does not add header but allows to add content and specification of 
      * new line. For producing a line break, simply set content to null and 
      * newLine to true.
@@ -3723,7 +3726,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Does not add header but allows to add content and specification of 
      * new line. For producing a line break, simply set content to null and 
      * newLine to true.
@@ -3735,7 +3738,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line.
      * @param headerField Header field
@@ -3749,7 +3752,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line.
      * @param headerField Header field
@@ -3763,7 +3766,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line.
      * @param headerField Header field
@@ -3777,7 +3780,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line.
      * @param headerField Header field
@@ -3791,7 +3794,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line.
      * @param headerField Header field
@@ -3805,7 +3808,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line. Does NOT add a line break at the end.
      * Suppresses appending if content is null.
@@ -3819,7 +3822,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line. Does NOT add a line break at the end.
      * Suppresses appending if content is null.
@@ -3833,7 +3836,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line. Does NOT add a line break at the end.
      * Suppresses appending if content is null.
@@ -3847,7 +3850,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line. Does NOT add a line break at the end.
      * Suppresses appending if content is null.
@@ -3861,7 +3864,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Writes to CSV file (see {@link #appendToFile(String, String, boolean)}).
+     * Writes to CSV file (see {@link #appendToFile(String, String, boolean, boolean)}).
      * Appends header and values to outfile using CSV separation 
      * with header line. Does NOT add a line break at the end.
      * @param headerField
@@ -3953,7 +3956,7 @@ public abstract class Statistics implements Steppable {
      * Does NOT close the file. Should only be used for output that is 
      * relevant for interpreting the file correctly with other tools. 
      * Actual simulation data should be written using a variant of
-     * {@link #appendToFile(String, String, boolean)}.
+     * {@link #appendToFile(String, String, boolean, boolean)}.
      * @param content Content to be written
      */
     protected void writeDirectlyToFile(String content){

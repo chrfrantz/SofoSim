@@ -1,10 +1,10 @@
 package org.sofosim.environment.memoryTypes;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.nzdis.micro.util.DataStructurePrettyPrinter;
+import org.sofosim.environment.memoryTypes.util.MapValueComparator;
 import org.sofosim.environment.stats.StatsCalculator;
 
 /**
@@ -20,10 +20,26 @@ import org.sofosim.environment.stats.StatsCalculator;
  *
  */
 public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulMemory<K,V>{
-	
+
+	/**
+	 * Number of entries that can in principle be accessed.
+	 */
 	private Integer numberOfEntries = null;
+
+	/**
+	 * Actual memory array.
+	 */
 	protected MemoryEntry<K, V>[] memoryArray;
+
+	/**
+	 * Internal counter for memory array slot access.
+	 */
 	private int currentCounter = 0;
+
+	/**
+	 * Indicates that memory entries have been saved (written).
+	 */
+	private boolean hasEntries = false;
 	
 	public DiscreteNonAggregatingMemory(Integer numberOfEntries){
 		setNumberOfMemoryEntries(numberOfEntries);
@@ -80,8 +96,25 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		}
 		//notify change listeners
 		notifyMemoryChangeListeners();
+		//adjust memory write flag
+		if (!hasEntries) {
+			hasEntries = true;
+		}
 	}
 
+	/**
+	 * Indicates whether memory has entries.
+	 * @return
+	 */
+	@Override
+	public boolean hasEntries() {
+		return hasEntries;
+	}
+
+	/**
+	 * Returns mean value of all memory entries.
+	 * @return
+	 */
 	@Override
 	public Double getMeanOfAllEntries() {
 		Double sum = 0.0;
@@ -92,7 +125,12 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		}
 		return sum / new Integer(memoryArray.length).floatValue();
 	}
-	
+
+	/**
+	 * Indicates whether memory contains entry with given key.
+	 * @param key Key of memory entry
+	 * @return
+	 */
 	@Override
 	public boolean containsKey(K key) {
 		for(int i = 0; i < memoryArray.length; i++){
@@ -124,7 +162,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	}
 
 	/**
-	 * Returns the actual number of entries in memory.
+	 * Returns the number of possible entries in memory (memory slots) - independent of usage.
 	 * @return
 	 */
 	@Override
