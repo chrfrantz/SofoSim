@@ -491,7 +491,7 @@ public abstract class Statistics implements Steppable {
      * Indicates if round information is to be printed to console (i.e. indicating a new round).
      */
     public static boolean printRoundToConsole = false;
-    
+
     /**
      * Specifies if StatsForm should be shown.
      */
@@ -2334,7 +2334,7 @@ public abstract class Statistics implements Steppable {
      * @param yValue y-value for round of series
      */
     public void addDataSeriesEntryForCurrentRound(final String chartDataKey, final String seriesName, final Number yValue){
-        if(sim != null){
+        if(sim != null && sim.SHOW_STATS_GRAPHS){
             if(excludedDataSeries.contains(seriesName) || yValue == null){
                 return;
             }

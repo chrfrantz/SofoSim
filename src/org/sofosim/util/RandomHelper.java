@@ -35,7 +35,7 @@ public class RandomHelper {
     /**
      * Returns a single element from a collection of generic type instances.
      * Returns null if not enough elements to pick from collection.
-     * @param set Set to pick from
+     * @param collection Set to pick from
      * @return returns null if input set is null or empty.
      */
     public static <T> T getRandomElement(final Collection<T> collection) {
@@ -111,9 +111,11 @@ public class RandomHelper {
     
     /**
      * Returns a single element from collection of elements based on weight.
-     * @param candidates
-     * @param weights
-     * @return
+     * Takes candidate elements to draw from and associated weights. Candidates and weights
+     * need to be in corresponding order (i.e., first weight applies to first candidate, etc.).
+     * @param candidates Candidate elements
+     * @param weights Weights associated with corresponding candidate elements
+     * @return Single candidate randomly drawn from candidates based on weights
      */
     public static <T> T getRandomElementWithWeightedInput(final List<T> candidates, final Float... weights) {
     	// Check for empty input
