@@ -3309,8 +3309,9 @@ public abstract class Statistics implements Steppable {
 
     /**
      * Strategy applied if new content is written and header file has changed.
+     * Default strategy is to create new files with suffix in name.
      */
-    private String headerChangeFileWriteStrategy = STATS_STRATEGY_CHANGED_HEADER_DELETE_FILE;
+    private String headerChangeFileWriteStrategy = STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX;
 
     /**
      * Counter for outfile suffix if strategy {@link #STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX} is active.
@@ -3514,9 +3515,19 @@ public abstract class Statistics implements Steppable {
                 } else {
                     // Ad hoc structure, relying on fixed order and same number of headers (faster)
                     if(headerField != null){
-                        fileCurrentLineHeader.append(headerField).append(CSV_DELIMITER);
+                        if(fileCurrentLineHeader.length() != 0) {
+                            // If line header has entry has content, prepend delimiter first, ...
+                            fileCurrentLineHeader.append(CSV_DELIMITER);
+                        }
+                        // ... before adding further content
+                        fileCurrentLineHeader.append(headerField);
                     }
-                    fileCurrentLine.append(content).append(CSV_DELIMITER);
+                    if(fileCurrentLine.length() != 0) {
+                        // If current line has entries, prepend delimiter first, ...
+                        fileCurrentLine.append(CSV_DELIMITER);
+                    }
+                    // ... before adding further content
+                    fileCurrentLine.append(content);
                 }
             }
             if(newline || onlyLineBreak){
@@ -3524,18 +3535,32 @@ public abstract class Statistics implements Steppable {
                 if(generateAndMaintainOutfileDataStructureIncrementally){
                     // Go through all entries for this line add them to outfile in one shot
                     for(String key: outFileHeaders){
-                        fileCurrentLineHeader.append(key).append(CSV_DELIMITER);
+                        if(fileCurrentLineHeader.length() != 0) {
+                            // If line header has entry has content, prepend delimiter first, ...
+                            fileCurrentLineHeader.append(CSV_DELIMITER);
+                        }
+                        // ... before adding next key
+                        fileCurrentLineHeader.append(key);
                         if(outFileValuesForCurrentRound.containsKey(key)){
+                            if(fileCurrentLine.length() != 0) {
+                                // If current line has entries, prepend delimiter first, ...
+                                fileCurrentLine.append(CSV_DELIMITER);
+                            }
+                            // ... before adding new value
                             fileCurrentLine.append(outFileValuesForCurrentRound.get(key));
                         } else {
+                            if(fileCurrentLine.length() != 0) {
+                                // If current line has entries, prepend delimiter irrespective of presence of value (it may be empty)
+                                fileCurrentLine.append(CSV_DELIMITER);
+                            }
                             if(defaultValueForEmptyStatsDataValue != null){
+                                // ... before adding an eventual default empty value
                                 fileCurrentLine.append(defaultValueForEmptyStatsDataValue);
                             }
                         }
-                        fileCurrentLine.append(CSV_DELIMITER);
                     }
                 }
-                //conventional operations
+                // Now the new line is processed. From here on focus on buffering and header row consistency
                 
                 // Finishing row
                 fileCurrentLineHeader.append(LINEBREAK);
