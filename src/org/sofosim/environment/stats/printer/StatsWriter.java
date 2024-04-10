@@ -296,7 +296,8 @@ public abstract class StatsWriter {
 	/**
 	 * Returns the full pathname to the project folder for file creation, 
 	 * including a subfolder if passed as parameter (only name, no back-/slashes).
-	 * @param subfolderName
+	 * @param subfolderName Subfolder name
+	 * @param getDirectory Indicates whether only directory name should be returned (as opposed filename)
 	 * @return
 	 */
 	private File getFileOrDirectory(String subfolderName, boolean getDirectory) {
@@ -322,7 +323,12 @@ public abstract class StatsWriter {
         }
         return propertiesFile;
     }
-	
+
+	/**
+	 * Returns operating system-dependent directory separator.
+	 * Supports UNIX/Linux and Windows.
+	 * @return
+	 */
 	public static String getOsDependentDirectorySeparator(){
 		if ((System.getProperty("user.dir")).substring(0, 1).equals("/")) {
 			//UNIX
@@ -342,7 +348,7 @@ public abstract class StatsWriter {
 	 * Checks if a given filename or subfolder name contains slashes or backslashes. 
 	 * For files these are not allowed, for directories they are automatically replaced 
 	 * in an OS-dependent manner.
-	 * @param subfolderName Folder name to test (may also be null or empty)
+	 * @param directoryOrFileName Folder or file name to test (may also be null or empty)
 	 * @param isFileName Indicates if input should be treated as filename (no slashes allowed), else directory
 	 * @return corrected subfolder name (if slash replacement has taken place)
 	 */

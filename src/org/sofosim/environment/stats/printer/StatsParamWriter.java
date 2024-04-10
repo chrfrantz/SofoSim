@@ -71,9 +71,6 @@ public class StatsParamWriter extends StatsWriter {
 			this.superClassLevelsToInspect = 0;
 		}
 		writeParameters();
-		//write(StatsReflector.readCurrentParameters(otherSimClass, otherInstance));
-		//close();
-		//System.out.println(prefix + "Wrote file '" + getFilename() + "'.");
 	}
 
 }

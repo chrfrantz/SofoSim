@@ -336,7 +336,7 @@ public abstract class Statistics implements Steppable {
      */
     public Font chartAxisLabelFont = new Font("Tahoma", Font.BOLD, 14);
     /**
-     * Font for ticks along time series charts. Default: Tahoma, plain, 12pt
+     * Font for ticks on time series charts. Default: Tahoma, plain, 12pt
      */
     public Font chartAxisTickFont = new Font("Tahoma", Font.PLAIN, 12);
     /**
@@ -3293,6 +3293,40 @@ public abstract class Statistics implements Steppable {
             System.out.println("Generated complete simulation path and file prefix: " + completePathAndOutFilePrefix);
         }
     }
+
+    /**
+     * Strategy applied if new content is written and header file has changed.
+     * This strategy deletes the original output file, and creates a new outfile effectively overwriting the old one (i.e., old data is lost)
+     */
+    public static final String STATS_STRATEGY_CHANGED_HEADER_DELETE_FILE = "STATS_STRATEGY_CHANGED_HEADER_DELETE_FILE";
+
+    /**
+     * Strategy applied if new content is written and header file has changed.
+     * This strategy creates and *additional file* with an incremented suffix (e.g., 01_data.txt). Any further content is written to this file
+     * until another header change occurs.
+     */
+    public static final String STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX = "STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX";
+
+    /**
+     * Strategy applied if new content is written and header file has changed.
+     */
+    private String headerChangeFileWriteStrategy = STATS_STRATEGY_CHANGED_HEADER_DELETE_FILE;
+
+    /**
+     * Counter for outfile suffix if strategy {@link #STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX} is active.
+     */
+    private int outfileSuffixCounter = 0;
+
+    /**
+     * Sets header change strategy applied when writing content to outfile. Supports strategies
+     * {@link #STATS_STRATEGY_CHANGED_HEADER_DELETE_FILE} (file deletion and writing content into new file - effectively overwriting) and
+     * {@link #STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX} (creating new file with suffix and continuing writing to that file.
+     * @param strategy Strategy to be set
+     */
+    public void setHeaderChangeFileWriteStrategy(String strategy) {
+        System.out.println(PREFIX + "Setting header change strategy to " + strategy);
+        headerChangeFileWriteStrategy = strategy;
+    }
     
     /**
      * Subfolder used for simulation instance
@@ -3330,15 +3364,24 @@ public abstract class Statistics implements Steppable {
      */
     private static boolean createShortFolderNameAndSeparateTagFolderInstead = false;
     
-    /** specific to stats printing */
+    /** Variables specific to stats printing */
     
     StatsDataWriter statsWriter = null;
+    /** StringBuffer caching the header row written to file (to facilitate comparison in the case of change) */
     StringBuffer filePreviousLineHeader = new StringBuffer();
+    /** StringBuffer holding generated header row for this iteration (in order to assess whether the structure has
+     *  changed based on comparison to {@link #filePreviousLineHeader}.
+     */
     StringBuffer fileCurrentLineHeader = new StringBuffer();
+    /** StringBuffer holding values (i.e., content) for current iteration to be printed. */
     StringBuffer fileCurrentLine = new StringBuffer();
+    /** StringBuffer holding content prior to writing (e.g., if writing is cached and occurs infrequently) */
     StringBuffer fileOutputBuffer = new StringBuffer();
+    /** Delimiter used in generated output files */
     public static final String CSV_DELIMITER = "|";
+    /** Indicates frequency with which buffer content from {@link #fileOutputBuffer} is written to file */
     private int writeToDataFileEveryNoOfLines = 10;
+    /** Counts number of lines written to buffer since last write */
     private int collectedLinesSinceLastWriteToDataFile = 0;
     
     /** Suffix for parameter file */
@@ -3354,13 +3397,6 @@ public abstract class Statistics implements Steppable {
      * Filename for storing CSV headers generated during runtime - set during Stats initialisation
      */
     public static String CSV_HEADER_OUTFILE_NAME = "csv.headers file name";
-    
-    /**
-     * Indicates if output files should be overwritten if number of entries (i.e. CSV columns) change.
-     * If set to true, all previous stats data output is deleted and the file is written with a 
-     * new header.
-     */
-    public boolean overwriteOutputFileUponHeaderChange = false;
     
     /**
      * If set to true, stats data file is closed after every write access and thus 
@@ -3401,20 +3437,19 @@ public abstract class Statistics implements Steppable {
      * Activates writing of CSV file headers to outfile as they are generated
      * by statistics output, so it can be read by subsequent runs and 
      * consistently populate CSV outfile headers.
-     * Activates overwriting of changed output file to ensure the 
-     * updated CSV headers are saved to disk.
-     * @param activate
+     * Requires specification of strategy to handle modified headers (see {@link #STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX}
+     * and {@link #STATS_STRATEGY_CHANGED_HEADER_DELETE_FILE}).
+     * @param activate Indicates whether the writing is activated
+     * @param headerChangeFileWriteStrategy Strategy to be applied when encountering updated headers
      */
-    public void setWriteCsvFileHeadersToFile(boolean activate) {
+    public void setWriteCsvFileHeadersToFile(boolean activate, String headerChangeFileWriteStrategy) {
         this.saveCsvFileHeadersUponHeaderChange = activate;
-        this.overwriteOutputFileUponHeaderChange = activate;
+        setHeaderChangeFileWriteStrategy(headerChangeFileWriteStrategy);
     }
     
     /**
      * Indicates whether the CSV header file is read upon initialisation and 
-     * used as a schema for produced output. Deactivates the overwriting of 
-     * changed CSV schemas. Note: If {@link #setWriteCsvFileHeadersToFile(boolean)} 
-     * is activated afterwards, overwriting of changed CSV schemas remains activated.
+     * used as a schema for produced output.
      * If desired, the entries can be sorted alphabetically during initialisation.
      * The sorted entries can further be written back to the file.
      * @param activate
@@ -3425,7 +3460,6 @@ public abstract class Statistics implements Steppable {
         this.readCsvFileHeadersUponInitialisation = activate;
         this.sortCsvFileHeadersUponReading = sortEntriesDuringReading;
         this.writeSortedCsvFileHeadersToFile = writeSortedHeadersBackToFile;
-        this.overwriteOutputFileUponHeaderChange = !activate;
     }
     
     
@@ -3451,9 +3485,12 @@ public abstract class Statistics implements Steppable {
     
     /**
      * Appends header and values to CSV outfile using {@link #CSV_DELIMITER} 
-     * for value separation as well as header line. 
+     * for value separation as well as header line.
+     * This function is the core function for data writing on which all other variants rely.
      * Allows appending a line break (using newLine). Alternatively, only
      * a line break can be appended, in which case all other fields are ignored.
+     * Takes active strategy for dealing with changed headers into account ({@link #setHeaderChangeFileWriteStrategy(String)},
+     * which specifies how to deal with deviating headers (e.g., deletion, new filename) -- see corresponding method for details.
      * See simplified method versions below.
      * @param headerField description (header) for the value
      * @param content actual value
@@ -3464,7 +3501,7 @@ public abstract class Statistics implements Steppable {
         if(statsWriter != null && collectDataThisRound){
             if(content != null && !onlyLineBreak){
                 if(generateAndMaintainOutfileDataStructureIncrementally){
-                    //caching approach - add headers if not used yet
+                    // Caching approach - add headers if not used yet
                     if(!outFileHeaders.contains(headerField)){
                         outFileHeaders.add(headerField);
                         // Write current CSV headers to outfile if activated - for later reuse
@@ -3472,10 +3509,10 @@ public abstract class Statistics implements Steppable {
                             writeCsvHeadersToFile();
                         }
                     }
-                    //save content for this round in map
+                    // Save content for this round in map
                     outFileValuesForCurrentRound.put(headerField, content);
                 } else {
-                    //ad hoc structure, relying on fixed order and same number of headers (faster)
+                    // Ad hoc structure, relying on fixed order and same number of headers (faster)
                     if(headerField != null){
                         fileCurrentLineHeader.append(headerField).append(CSV_DELIMITER);
                     }
@@ -3483,9 +3520,9 @@ public abstract class Statistics implements Steppable {
                 }
             }
             if(newline || onlyLineBreak){
-                //combine maps to StringBuffer lines for further processing
+                // Combine maps to StringBuffer lines for further processing
                 if(generateAndMaintainOutfileDataStructureIncrementally){
-                    //go through all entries for this line add them to outfile in one shot
+                    // Go through all entries for this line add them to outfile in one shot
                     for(String key: outFileHeaders){
                         fileCurrentLineHeader.append(key).append(CSV_DELIMITER);
                         if(outFileValuesForCurrentRound.containsKey(key)){
@@ -3500,49 +3537,70 @@ public abstract class Statistics implements Steppable {
                 }
                 //conventional operations
                 
-                //finishing row
+                // Finishing row
                 fileCurrentLineHeader.append(LINEBREAK);
                 fileCurrentLine.append(LINEBREAK);
-                //check if column headers have changed (e.g. output value added first time)
+                // Check if column headers have changed (e.g. output value added first time)
                 if(!fileCurrentLineHeader.toString().equals(filePreviousLineHeader.toString())){
-                    //delete original output file if activated and also clear buffer
-                    if(filePreviousLineHeader.length() > 0 && overwriteOutputFileUponHeaderChange){
-                        if(statsWriter != null){
-                            if(statsWriter.deleteFile()){
-                                resetOutputBuffer();
-                                System.out.println(PREFIX + "Reset stats file as of changed output headers.");
-                            } else {
-                                System.err.println(PREFIX + "Deleting stats file as of changed output headers failed!");
-                            }
-                        } else {
-                            System.err.println(PREFIX + "StatsWriter is null. Should not be the case when collecting data to write.");
+                    // Handle changed header according to strategy
+                    if(filePreviousLineHeader.length() > 0) {
+                        switch(headerChangeFileWriteStrategy) {
+                            // Delete original output file if activated and also clear buffer
+                            case STATS_STRATEGY_CHANGED_HEADER_DELETE_FILE:
+                                if (statsWriter != null) {
+                                    if (statsWriter.deleteFile()) {
+                                        resetOutputBuffer();
+                                        System.out.println(PREFIX + "Reset stats file as of changed output headers.");
+                                    } else {
+                                        System.err.println(PREFIX + "Deleting stats file as of changed output headers failed!");
+                                    }
+                                } else {
+                                    System.err.println(PREFIX + "StatsWriter is null. Should not be the case when collecting data to write.");
+                                }
+                                break;
+                            // Create new output file with adjusted name (injects counter into filename, e.g., '...(1)_data.txt')
+                            case STATS_STRATEGY_CHANGED_HEADER_NEW_FILE_SUFFIX:
+                                if (statsWriter != null) {
+                                    // Ensure that original data is written before creating new output file
+                                    writeDataToDiskAndCloseFile();
+                                    // Increase suffix counter for newly generated output file
+                                    outfileSuffixCounter++;
+                                    // Reset output filename (e.g., '....(1)_data.txt')
+                                    statsWriter.setFilename(outFilePrefix + "(" + outfileSuffixCounter + ")" + dataFileSuffix + ending);
+                                } else {
+                                    System.err.println(PREFIX + "StatsWriter is null. Should not be the case when collecting data to write.");
+                                }
+                                break;
+                            default: System.err.println(PREFIX + "Unknown header change write strategy: " + headerChangeFileWriteStrategy);
                         }
                     }
-                    //if so, rewrite entire column header of outfile
+                    // Given that we are in a new file (or deleted the old one), rewrite entire column header row
                     fileOutputBuffer.append(fileCurrentLineHeader);
-                    //remember previous line for later comparison
+                    // Cache previous line for later comparison
                     filePreviousLineHeader = fileCurrentLineHeader;
                  
                 }
+                // Append current content line
                 fileOutputBuffer.append(fileCurrentLine);
-                //reset structures for next line
+                // Reset structures for next line/invocation
                 fileCurrentLine = new StringBuffer();
                 fileCurrentLineHeader = new StringBuffer();
                 if(generateAndMaintainOutfileDataStructureIncrementally){
-                    //delete all entries for this round's value HashMap (if used)
+                    // Delete all entries for this round's value HashMap (if used)
                     outFileValuesForCurrentRound.clear();
                 }
                 //write to outfile if buffer threshold is reached
                 if(collectedLinesSinceLastWriteToDataFile == writeToDataFileEveryNoOfLines){
                     if(closeFileAfterEveryStatsDataWrite){
-                        //close file
+                        // Close file
                         writeDataToDiskAndCloseFile();
                     } else {
-                        //don't close file
+                        // Don't close file
                         writeBufferedDataToDisk();
                     }
                 } else {
                     //System.out.println("Collected: " + collectedLinesSinceLastWriteToDataFile);
+                    // Increase count for collected lines if not written to disk
                     collectedLinesSinceLastWriteToDataFile++;
                 }
             }
