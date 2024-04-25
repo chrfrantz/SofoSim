@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.nzdis.micro.util.DataStructurePrettyPrinter;
-import org.sofosim.environment.memoryTypes.util.MapValueComparator;
 import org.sofosim.environment.stats.StatsCalculator;
 
 /**
@@ -37,6 +36,11 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	private int currentCounter = 0;
 
 	/**
+	 * Keeps track of the used capacity of the memory (i.e., to ignore empty slots).
+	 */
+	private int usedCapacity = 0;
+
+	/**
 	 * Indicates that memory entries have been saved (written).
 	 */
 	private boolean hasEntries = false;
@@ -64,23 +68,6 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		notifyMemoryChangeListeners();
 	}
 	
-	protected class MemoryEntry<K,V> {
-		
-		public K key = null;
-		public V value = null;
-		
-		public MemoryEntry(K key, V value){
-			this.key = key;
-			this.value = value;
-		}
-
-		@Override
-		public String toString() {
-			return "MemoryEntry [key=" + key + ", value=" + value + "]";
-		}
-		
-	}
-	
 	/**
 	 * Memorizes a value for a given agent, removing
 	 * the last element from the queue.
@@ -91,6 +78,12 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		//replace old entry
 		memoryArray[currentCounter] = new MemoryEntry<K,V>(key, value);
 		currentCounter++;
+
+		if(usedCapacity < memoryArray.length) {
+			// Keep track of used capacity
+			usedCapacity++;
+		}
+		// Reset memory point if reaching capacity
 		if(currentCounter == memoryArray.length){
 			currentCounter = 0;
 		}
@@ -112,18 +105,20 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	}
 
 	/**
-	 * Returns mean value of all memory entries.
+	 * Returns mean value of all populated memory entries.
 	 * @return
 	 */
 	@Override
 	public Double getMeanOfAllEntries() {
 		Double sum = 0.0;
-		for(int i = 0; i < memoryArray.length; i++){
+		// Iterate only through used capacity
+		// (will be same as memory length after first filling
+		for(int i = 0; i < usedCapacity; i++){
 			if(memoryArray[i] != null){
 				sum += memoryArray[i].value.doubleValue();
 			}
 		}
-		return sum / new Integer(memoryArray.length).floatValue();
+		return sum / new Integer(usedCapacity).floatValue();
 	}
 
 	/**
@@ -142,8 +137,8 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	}
 
 	/**
-	 * Returns all memory entries as HashMap. Aggregates values 
-	 * for duplicate keys.
+	 * Returns all memory entries as list of memory entries.
+	 * Aggregates values for duplicate keys.
 	 * @return
 	 */
 	@Override
@@ -161,6 +156,43 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		return returnedMemory;
 	}
 
+	protected class CountSumEntry {
+		public Float sum;
+		public Integer count;
+
+		@Override
+		public String toString() {
+			return "CountSumEntry[sum=" + sum + ",count=" + count + "]";
+		}
+	}
+
+	/**
+	 * Returns complete memory entries, including aggregation values based on count and sum per entry.
+	 * @return
+	 */
+	public HashMap<K, CountSumEntry> getCompleteEntries() {
+		HashMap<K, CountSumEntry> returnedMemory = new HashMap<>();
+		for(int i = 0; i < memoryArray.length; i++){
+			if(memoryArray[i] != null){
+				if(returnedMemory.containsKey(memoryArray[i].key)){
+					// Revise existing entry
+					CountSumEntry entry = returnedMemory.get(memoryArray[i].key);
+					entry.sum += (Float) memoryArray[i].value;
+					entry.count++;
+					returnedMemory.put(memoryArray[i].key, entry);
+				} else {
+					// Initialize entry
+					CountSumEntry entry = new CountSumEntry();
+					entry.sum = (Float) memoryArray[i].value;
+					entry.count = 1;
+					returnedMemory.put(memoryArray[i].key, entry);
+				}
+			}
+		}
+		return returnedMemory;
+	}
+
+
 	/**
 	 * Returns the number of possible entries in memory (memory slots) - independent of usage.
 	 * @return
@@ -171,15 +203,15 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	}
 
 	/**
-	 * Returns aggregated value for given entry
-	 * @param agent
+	 * Returns aggregated value for given entry key
+	 * @param key
 	 * @return
 	 */
 	@Override
-	public Float getValueForKey(K agent) {
+	public Float getValueForKey(K key) {
 		Float retValue = 0.0f;
 		for(int i = 0; i < memoryArray.length; i++){
-			if(memoryArray[i] != null && memoryArray[i].key.equals(agent)){
+			if(memoryArray[i] != null && memoryArray[i].key.equals(key)){
 				retValue += memoryArray[i].value.floatValue();
 			}
 		}
@@ -206,7 +238,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	 * Returns key-value pair for highest value.
 	 * @return
 	 */
-	public Pair getKeyValuePairForHighestValue() {
+	public PairValueComparison<K, Number> getKeyValuePairForHighestValue() {
 		return getExtremeKeyValueEntry(true);
 	}
 	
@@ -214,7 +246,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	 * Returns key-value pair for lowest value.
 	 * @return
 	 */
-	public Pair getKeyValuePairForLowestValue() {
+	public PairValueComparison<K, Number> getKeyValuePairForLowestValue() {
 		return getExtremeKeyValueEntry(false);
 	}
 
@@ -233,8 +265,14 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	public K getKeyForLowestValue() {
 		return getExtremeKeyValueEntry(false).key;
 	}
-	
-	private Pair getExtremeKeyValueEntry(boolean highestOrLowest){
+
+
+	/**
+	 * Returns key-value pair for entry with extremal value, whether high or low.
+	 * @param highestOrLowest Indicates whether high or low value is to be returned.
+	 * @return
+	 */
+	private PairValueComparison<K, Number> getExtremeKeyValueEntry(boolean highestOrLowest){
 		K key = null;
 		Float extremeValue = null;
 		HashMap<K, Float> map = new HashMap<>();
@@ -274,37 +312,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		if (key == null) {
 			return null;
 		}
-		return new Pair(key, (V)extremeValue);
-	}
-	
-	public class Pair implements Comparable<Pair>{
-		
-		public K key = null;
-		public V value = null;
-		
-		public Pair(K key, V value){
-			this.key = key;
-			this.value = value;
-		}
-		
-		public K getKey() {
-			return key;
-		}
-		
-		public V getValue() {
-			return value;
-		}
-
-		@Override
-		public String toString() {
-			return "Pair [key=" + key + ", value=" + value + "]";
-		}
-
-		@Override
-		public int compareTo(DiscreteNonAggregatingMemory<K, V>.Pair o) {
-			return new Double(this.getValue().doubleValue()).compareTo(new Double(o.getValue().doubleValue()));
-		}
-		
+		return new PairValueComparison<K, Number>(key, (V)extremeValue);
 	}
 	
 	/**
@@ -319,7 +327,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	}
 	/**
 	 * Returns a list of keys whose values are greater than a given threshold.
-	 * @param threshold
+	 * @param threshold Lower value boundary (excluded) for values whose keys are to be returned
 	 * @return
 	 */
 	@Override
@@ -329,7 +337,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	
 	/**
 	 * Returns a list of keys whose values are smaller than a given threshold.
-	 * @param threshold
+	 * @param threshold Upper value boundary (excluded) for values whose keys are to be returned
 	 * @return
 	 */
 	@Override
@@ -356,7 +364,11 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	public List<K> getAllKeysForValuesSmallerThanOrEqualTo(float threshold){
 		return getAllKeysForValuesWithThreshold(threshold, false, true);
 	}
-	
+
+	/**
+	 * Returns standard deviation across all entries.
+	 * @return
+	 */
 	@Override
 	public Float getStandardDeviationOfAllEntries(){
 		StatsCalculator<Float> calc = new StatsCalculator<Float>();
@@ -370,7 +382,8 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	
 	/**
 	 * Returns a map of entries whose keys start with a specified string. 
-	 * Aggregates values that share the same key. 
+	 * Aggregates values that share the same key.
+	 * @param startOfKeyName String to-be-aggregated key names start with
 	 */
 	@Override
 	public HashMap<K, V> getAllEntriesThatStartWith(
@@ -390,7 +403,8 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 
 	/**
 	 * Returns a map of entries whose keys contain a specified string. 
-	 * Aggregates values that share the same key. 
+	 * Aggregates values that share the same key.
+	 * @param containedInKeyName String contained in key name
 	 */
 	@Override
 	public HashMap<K, V> getAllEntriesThatContain(
@@ -409,11 +423,11 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	}
 	
 	/**
-	 * Returns the number of maintained memory entries.
+	 * Returns the number of used memory entries (not the potential capacity).
 	 * @return
 	 */
 	public Integer getNumberOfMemoryEntries(){
-		return this.numberOfEntries;
+		return usedCapacity < this.numberOfEntries ? usedCapacity : this.numberOfEntries;
 	}
 	
 	/**
@@ -422,7 +436,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	 */
 	public void setNumberOfMemoryEntries(Integer updatedNumberOfMemoryEntries){
 		this.numberOfEntries = updatedNumberOfMemoryEntries;
-		//initialize array used for DiscreteNonAggregatingMemory
+		// Initialize array used for DiscreteNonAggregatingMemory
 		this.memoryArray = new MemoryEntry[this.numberOfEntries];
 		notifyMemoryChangeListeners();
 	}
@@ -434,7 +448,7 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	 */
 	@Override
 	public void forgetAtRoundEnd(float unusedParameterForDiscreteMemory) {
-		//nothing happens as values are overridden by reiterating over array
+		// Nothing happens as values are overridden by reiterating over array
 	}
 
 	@Override

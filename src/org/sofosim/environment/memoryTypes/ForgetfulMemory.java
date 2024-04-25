@@ -1,10 +1,6 @@
 package org.sofosim.environment.memoryTypes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.sofosim.environment.memoryTypes.listeners.MemoryChangeListener;
@@ -37,6 +33,25 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	protected static final String STDDEV = "STDDEV";
 
 	/**
+	 * Constants for value aggregation.
+	 */
+
+	/**
+	 * Aggregation by counting
+	 */
+	public static final int AGGREGATION_COUNT = 1;
+
+	/**
+	 * Aggregation as mean
+	 */
+	public static final int AGGREGATION_MEAN = 2;
+
+	/**
+	 * Aggregation as sum
+	 */
+	public static final int AGGREGATION_SUM = 3;
+
+	/**
 	 * Indicates whether memory contains entries.
 	 * @return
 	 */
@@ -44,7 +59,24 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	public boolean hasEntries(){
 		return !memory.isEmpty();
 	}
-	
+
+	protected class MemoryEntry<K,V> {
+
+		public K key = null;
+		public V value = null;
+
+		public MemoryEntry(K key, V value){
+			this.key = key;
+			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return "MemoryEntry [key=" + key + ", value=" + value + "]";
+		}
+
+	}
+
 	/**
 	 * Returns the standard deviation of all memory entries.
 	 * @return
@@ -87,6 +119,12 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 		}
 		return returnedMap;
 	}
+
+	/**
+	 * Returns list of memory entries. Implementation can vary based on memory type.
+	 * @return
+	 */
+	public abstract HashMap<K, V> getAllEntries();
 	
 	/**
 	 * Returns a list of keys whose values fall into a given threshold selection.
@@ -333,7 +371,7 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	public List<K> getAllKeysForValuesSmallerThanOrEqualTo(float threshold){
 		return getAllKeysForValuesWithThreshold(threshold, false, true);
 	}
-	
+
 	private LinkedHashSet<MemoryChangeListener> listeners = new LinkedHashSet<>();
 	
 	/**
@@ -431,6 +469,89 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 		//let's think about the rest when errors occur
 		throw new RuntimeException("Check type implementations in subtractTwoValues() for type " + a.getClass().getSimpleName());
 	}
+
+	/**
+	 * Pair structure that compares based on value (for ordering).
+	 * @param <N>
+	 * @param <F>
+	 */
+	public class PairValueComparison<N, F extends Number> implements Comparable<PairValueComparison<N, Number>>{
+
+		public K key = null;
+		public V value = null;
+
+		public PairValueComparison(K key, V value){
+			this.key = key;
+			this.value = value;
+		}
+
+		public K getKey() {
+			return key;
+		}
+
+		public V getValue() {
+			return value;
+		}
+
+		@Override
+		public String toString() {
+			return "Pair [key=" + key + ", value=" + value + "]";
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof PairValueComparison)) return false;
+			PairValueComparison<?, ?> that = (PairValueComparison<?, ?>) o;
+			return Objects.equals(key, that.key);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(key);
+		}
+
+		@Override
+		public int compareTo(PairValueComparison<N, Number> o) {
+			return new Double(this.getValue().doubleValue()).compareTo(new Double(o.getValue().doubleValue()));
+		}
+
+	}
+
+	/**
+	 * Pair structure that compares based on key.
+	 * @param <N>
+	 * @param <F>
+	 */
+	/*public class PairKeyComparison<N, F extends Number> implements Comparable<PairKeyComparison<N, Number>>{
+
+		public K key = null;
+		public V value = null;
+
+		public PairKeyComparison(K key, V value){
+			this.key = key;
+			this.value = value;
+		}
+
+		public K getKey() {
+			return key;
+		}
+
+		public V getValue() {
+			return value;
+		}
+
+		@Override
+		public String toString() {
+			return "Pair [key=" + key + ", value=" + value + "]";
+		}
+
+		@Override
+		public int compareTo(PairKeyComparison<N, Number> o) {
+			return new Double(this.getValue().doubleValue()).compareTo(new Double(o.getValue().doubleValue()));
+		}
+
+	}*/
 	
 	/**
 	 * Returns this memory's owner. 

@@ -38,7 +38,7 @@ public class DiscreteAggregatingMemory<K, V extends Number> extends ForgetfulMem
 		this.memory = new LinkedHashMap<>(entries);
 		notifyMemoryChangeListeners();
 	}
-	
+
 	/**
 	 * Memorizes a value for a given agent and adds it 
 	 * to eventual previous values associated with this agent, 
@@ -60,7 +60,7 @@ public class DiscreteAggregatingMemory<K, V extends Number> extends ForgetfulMem
 		for(V value: memory.values()){
 			sum = new BigDecimal(addTwoValues(sum, value).toString()).doubleValue();
 		}
-		return sum / memory.size();
+		return sum / (double)memory.size();
 	}
 	
 	@Override
@@ -68,7 +68,10 @@ public class DiscreteAggregatingMemory<K, V extends Number> extends ForgetfulMem
 		return memory.containsKey(key);
 	}
 
-	@Override
+	/**
+	 * Returns complete memory map.
+	 * @return
+	 */
 	public HashMap<K, V> getAllEntries() {
 		return memory;
 	}
@@ -97,7 +100,7 @@ public class DiscreteAggregatingMemory<K, V extends Number> extends ForgetfulMem
 		return getExtremeKeyValueEntry(false).key;
 	}
 	
-	private Pair<K, V> getExtremeKeyValueEntry(boolean highestOrLowest){
+	private PairValueComparison<K, Number> getExtremeKeyValueEntry(boolean highestOrLowest){
 		K key = null;
 		Float extremeValue = null;
 		if(highestOrLowest){
@@ -122,21 +125,9 @@ public class DiscreteAggregatingMemory<K, V extends Number> extends ForgetfulMem
 				}
 			}
 		}
-		return new Pair(key, extremeValue);
+		return new PairValueComparison<K, Number>(key, (V)extremeValue);
 	}
-	
-	private class Pair<K, V> {
-		
-		public K key = null;
-		public V value = null;
-		
-		public Pair(K key, V value){
-			this.key = key;
-			this.value = value;
-		}
-		
-	}
-	
+
 	/**
 	 * Returns the number of maintained memory entries.
 	 * @return

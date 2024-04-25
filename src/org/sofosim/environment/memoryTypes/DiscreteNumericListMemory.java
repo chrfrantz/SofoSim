@@ -13,7 +13,7 @@ import org.sofosim.environment.memoryTypes.listeners.MemoryChangeListener;
  */
 public class DiscreteNumericListMemory implements NumericalListMemoryInterface<Float>{
 
-	private ArrayList<Float> memory = new ArrayList<Float>(); 
+	private final ArrayList<Float> memory = new ArrayList<Float>();
 	private Integer numberOfEntries = null;
 	private Float sum = 0f;
 	private HashSet<MemoryChangeListener> listeners = new HashSet<>();
@@ -69,7 +69,8 @@ public class DiscreteNumericListMemory implements NumericalListMemoryInterface<F
 	@Override
 	public String toString() {
 		return "DiscreteListMemory [maxEntries="
-				+ numberOfEntries + ", currentNumberOfEntries=" + memory.size() + ", sum=" + sum + ", memory=" + memory + "]";
+				+ numberOfEntries + ", currentNumberOfEntries=" + memory.size() + ", sum=" + sum +
+				", mean=" + getMeanOfAllEntries() + ", memory=" + memory + "]";
 	}	
 	
 }

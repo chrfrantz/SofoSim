@@ -29,11 +29,6 @@ public interface AssociativeMemoryInterface<K, V> {
 	 */
 	public Double getMeanOfAllEntries();
 	
-	/**
-	 * Returns all memory entries.
-	 * @return
-	 */
-	public HashMap<K,V> getAllEntries();
 	
 	/**
 	 * Returns all entries that start with the given String.
