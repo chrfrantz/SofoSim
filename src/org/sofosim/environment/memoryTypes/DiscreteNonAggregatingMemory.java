@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.nzdis.micro.util.DataStructurePrettyPrinter;
+import org.sofosim.environment.memoryTypes.util.PairValueComparison;
 import org.sofosim.environment.stats.StatsCalculator;
 
 /**
@@ -156,6 +157,9 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		return returnedMemory;
 	}
 
+	/**
+	 * Complex data structure to hold sum as well as count information to allow for different aggregation forms.
+	 */
 	protected class CountSumEntry {
 		public Float sum;
 		public Integer count;

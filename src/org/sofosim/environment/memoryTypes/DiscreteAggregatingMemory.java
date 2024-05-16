@@ -1,5 +1,7 @@
 package org.sofosim.environment.memoryTypes;
 
+import org.sofosim.environment.memoryTypes.util.PairValueComparison;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

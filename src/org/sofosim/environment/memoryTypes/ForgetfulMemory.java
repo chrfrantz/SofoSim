@@ -471,54 +471,6 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	}
 
 	/**
-	 * Pair structure that compares based on value (for ordering).
-	 * @param <N>
-	 * @param <F>
-	 */
-	public class PairValueComparison<N, F extends Number> implements Comparable<PairValueComparison<N, Number>>{
-
-		public K key = null;
-		public V value = null;
-
-		public PairValueComparison(K key, V value){
-			this.key = key;
-			this.value = value;
-		}
-
-		public K getKey() {
-			return key;
-		}
-
-		public V getValue() {
-			return value;
-		}
-
-		@Override
-		public String toString() {
-			return "Pair [key=" + key + ", value=" + value + "]";
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof PairValueComparison)) return false;
-			PairValueComparison<?, ?> that = (PairValueComparison<?, ?>) o;
-			return Objects.equals(key, that.key);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hashCode(key);
-		}
-
-		@Override
-		public int compareTo(PairValueComparison<N, Number> o) {
-			return new Double(this.getValue().doubleValue()).compareTo(new Double(o.getValue().doubleValue()));
-		}
-
-	}
-
-	/**
 	 * Pair structure that compares based on key.
 	 * @param <N>
 	 * @param <F>
