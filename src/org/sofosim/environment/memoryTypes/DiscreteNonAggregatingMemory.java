@@ -447,8 +447,8 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 
 	/**
 	 * Forgets excess entries at end of round. Parameter is 
-	 * not of effect in this implementation. Uses memory 
-	 * length specified in constructor.
+	 * not of effect in this implementation. Requires overriding
+	 * in order to be implemented.
 	 */
 	@Override
 	public void forgetAtRoundEnd(float unusedParameterForDiscreteMemory) {
