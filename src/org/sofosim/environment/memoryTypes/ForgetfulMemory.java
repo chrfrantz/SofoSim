@@ -52,6 +52,11 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 	public static final int AGGREGATION_SUM = 3;
 
 	/**
+	 * Aggregation as max value of all considered statements
+	 */
+	public static final int AGGREGATION_MAX = 4;
+
+	/**
 	 * Indicates whether memory contains entries.
 	 * @return
 	 */
@@ -64,15 +69,22 @@ public abstract class ForgetfulMemory<K,V extends Number> implements Associative
 
 		public K key = null;
 		public V value = null;
+		public String comment = null;
 
 		public MemoryEntry(K key, V value){
 			this.key = key;
 			this.value = value;
 		}
 
+		public MemoryEntry(K key, V value, String comment){
+			this.key = key;
+			this.value = value;
+			this.comment = comment;
+		}
+
 		@Override
 		public String toString() {
-			return "MemoryEntry [key=" + key + ", value=" + value + "]";
+			return "MemoryEntry [key=" + key + ", value=" + value + (comment != null ? ", comment=" + comment : "") + "]";
 		}
 
 	}

@@ -68,16 +68,26 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 		}
 		notifyMemoryChangeListeners();
 	}
-	
+
 	/**
-	 * Memorizes a value for a given agent, removing
-	 * the last element from the queue.
+	 * Memorizes a value for a given agent, removing the last element from the queue.
+	 * For variant supporting additional comments, use {@link #memorize(Object, Number, String)}.
+	 * Important: If you continue to use the key in the calling instance,
+	 * ensure you save a copy to the memory to prevent modification after storing values.
+	 */
+	public void memorize(K key, V value) {
+		memorize(key, value, null);
+	}
+
+	/**
+	 * Memorizes a value for a given agent, removing the last element from the queue.
+	 * Also allows for addition of comment. For comment-less variant, see {@link #memorize(Object, Number)}.
 	 * Important: If you continue to use the key in the calling instance, 
 	 * ensure you save a copy to the memory to prevent modification after storing values. 
 	 */
-	public void memorize(K key, V value) {
+	public void memorize(K key, V value, String comment) {
 		//replace old entry
-		memoryArray[currentCounter] = new MemoryEntry<K,V>(key, value);
+		memoryArray[currentCounter] = new MemoryEntry<K,V>(key, value, comment);
 		currentCounter++;
 
 		if(usedCapacity < memoryArray.length) {
@@ -161,8 +171,18 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	 * Complex data structure to hold sum as well as count information to allow for different aggregation forms.
 	 */
 	protected class CountSumEntry {
+		/**
+		 * Sum of values
+		 */
 		public Float sum;
+		/**
+		 * Count of values
+		 */
 		public Integer count;
+		/**
+		 * Maximum value
+		 */
+		public Float max;
 
 		@Override
 		public String toString() {
@@ -183,12 +203,14 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 					CountSumEntry entry = returnedMemory.get(memoryArray[i].key);
 					entry.sum += (Float) memoryArray[i].value;
 					entry.count++;
+					entry.max = Math.max(entry.max, (Float)memoryArray[i].value);
 					returnedMemory.put(memoryArray[i].key, entry);
 				} else {
 					// Initialize entry
 					CountSumEntry entry = new CountSumEntry();
 					entry.sum = (Float) memoryArray[i].value;
 					entry.count = 1;
+					entry.max = (Float) memoryArray[i].value;
 					returnedMemory.put(memoryArray[i].key, entry);
 				}
 			}

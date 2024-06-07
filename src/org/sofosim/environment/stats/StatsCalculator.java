@@ -329,7 +329,7 @@ public class StatsCalculator<V extends Number> {
 	
 	
 	/**
-	 * Returns the number of data for given key, or 
+	 * Returns the number of entries for given key, or
 	 * null if that key does not exist.
 	 * @param keyOfConcern
 	 * @return
@@ -339,6 +339,18 @@ public class StatsCalculator<V extends Number> {
 			return keyValueMap.get(keyOfConcern).size();
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the number of entries across all keys.
+	 * @return
+	 */
+	public Integer getNumberOfEntries(){
+		int count = 0;
+		for (Entry<String, ArrayList<V>> entry: keyValueMap.entrySet()){
+			count += entry.getValue().size();
+		}
+		return count;
 	}
 	
 	/**
@@ -367,6 +379,18 @@ public class StatsCalculator<V extends Number> {
 		Float sum = 0.0f;
 		for(int i=0; i<list.size(); i++){
 			sum += list.get(i).floatValue();
+		}
+		return sum;
+	}
+
+	/**
+	 * Returns the sum of the values across all keys.
+	 * @return
+	 */
+	public Float getSumOfValues(){
+		float sum = 0f;
+		for (Entry<String, ArrayList<V>> entry : keyValueMap.entrySet()) {
+			sum += getSumOfValues(entry.getKey(), true);
 		}
 		return sum;
 	}
