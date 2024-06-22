@@ -770,7 +770,7 @@ public class GraphsPrinter {
 			builder.append(imageFormat);
 			builder.append("' is not supported for frame printing. Resorting to '");
 			//reset image format to be used
-			imageFormat = IMAGE_FORMAT_DEFAULT == IMAGE_FORMAT_SVG ? IMAGE_FORMAT_PNG : IMAGE_FORMAT_DEFAULT;
+			imageFormat = IMAGE_FORMAT_DEFAULT.equals(IMAGE_FORMAT_SVG) ? IMAGE_FORMAT_PNG : IMAGE_FORMAT_DEFAULT;
 			builder.append(imageFormat);
 			builder.append("'.");
 			System.err.println(builder.toString());
