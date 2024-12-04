@@ -4170,5 +4170,16 @@ public abstract class Statistics implements Steppable {
     public static boolean between(Integer lowerBoundary, Integer upperBoundary, boolean inclusive, Integer valueToTest){
         return between(new Double(lowerBoundary), new Double(upperBoundary), inclusive, new Double(valueToTest));
     }
+
+    /**
+     * Prints output from the Statistics module to the console.
+     * Only prints if #AgentConsoleOutputLevel is set to ALL_OUTPUT.
+     * @param outputToPrint
+     */
+    public void print(String outputToPrint) {
+        if(MTRuntime.getAgentConsoleOutputLevel() > AgentConsoleOutputLevels.ERROR){
+            System.out.println(PREFIX + outputToPrint);
+        }
+    }
     
 }
