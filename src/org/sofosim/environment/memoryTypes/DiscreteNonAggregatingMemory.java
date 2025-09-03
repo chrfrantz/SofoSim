@@ -229,6 +229,14 @@ public class DiscreteNonAggregatingMemory<K,V extends Number> extends ForgetfulM
 	}
 
 	/**
+	 * Returns the number of actually used entries (i.e., used capacity).
+	 * @return
+	 */
+	public Integer getNumberOfActualEntries() {
+		return usedCapacity;
+	}
+
+	/**
 	 * Returns aggregated value for given entry key
 	 * @param key
 	 * @return

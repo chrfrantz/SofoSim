@@ -1268,7 +1268,7 @@ public abstract class Statistics implements Steppable {
             if(COLLECT_DATA_EVERY_X_ROUNDS != -1 
                     && sim.schedule.getSteps() != 0 
                     && (sim.schedule.getSteps() % COLLECT_DATA_EVERY_X_ROUNDS == 0
-                    || sim.schedule.getSteps() == FIRST_ROUND_TO_RUN_PERIODIC_ACTIVITIES)){
+                    && sim.schedule.getSteps() >= FIRST_ROUND_TO_RUN_PERIODIC_ACTIVITIES)){
                 collectDataThisRound = true;
             }
             if(collectDataThisRound
@@ -1301,7 +1301,7 @@ public abstract class Statistics implements Steppable {
             if(RUN_CUSTOM_METHOD_EVERY_X_ROUNDS != -1 
                     && sim.schedule.getSteps() != 0 
                     && (sim.schedule.getSteps() % RUN_CUSTOM_METHOD_EVERY_X_ROUNDS == 0
-                    || sim.schedule.getSteps() == FIRST_ROUND_TO_RUN_PERIODIC_ACTIVITIES)){
+                    && sim.schedule.getSteps() >= FIRST_ROUND_TO_RUN_PERIODIC_ACTIVITIES)){
                 runPeriodicMethod = true;
             }
             //if not to be run called, last execute before other stuff

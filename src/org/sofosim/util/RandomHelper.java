@@ -1,9 +1,6 @@
 package org.sofosim.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import org.nzdis.micro.random.MersenneTwister;
 
@@ -56,6 +53,19 @@ public class RandomHelper {
         ArrayList<T> candidates = new ArrayList<>(collection);
         ArrayList<T> exceptionList = new ArrayList<>();
         exceptionList.add(exception);
+        return getRandomElement(candidates, exceptionList);
+    }
+
+    /**
+     * Returns a single element from a collection of generic type instances.
+     * Returns null if not enough elements to pick from collection.
+     * @param collection Collection to pick from
+     * @param exceptions List of all items to be excluded from selection
+     * @return returns null if input collection is null or empty.
+     */
+    public static <T> T getRandomElement(final Collection<T> collection, final List<T> exceptions) {
+        ArrayList<T> candidates = new ArrayList<>(collection);
+        ArrayList<T> exceptionList = new ArrayList<>(exceptions);
         return getRandomElement(candidates, exceptionList);
     }
     
