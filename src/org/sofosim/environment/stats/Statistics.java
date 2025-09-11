@@ -23,19 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -3662,9 +3651,11 @@ public abstract class Statistics implements Steppable {
     
 
     /**
-     * Number format instance for float, double and long output in non-scientific notation (i.e., without e notation)
+     * Number format instance for float, double and long output in non-scientific notation (i.e., without e notation).
+     * Locale is set to ENGLISH to ensure consistent output formats irrespective of machine's locale (specifically '.'
+     * as decimal separator instead of ',').
      */
-    private static final NumberFormat numberFormat = NumberFormat.getInstance();
+    private static final NumberFormat numberFormat = NumberFormat.getInstance(Locale.ENGLISH);
     
     static {
         numberFormat.setMaximumFractionDigits(DEFAULT_FLOAT_DECIMAL_PLACES);
