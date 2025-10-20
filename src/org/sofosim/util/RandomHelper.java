@@ -196,7 +196,7 @@ public class RandomHelper {
      * @return returns null if input list is null or empty.
      */
     public static <T> T getRandomElement(final List<T> list, final List<T> exceptions) {
-        ArrayList<T> elements = getRandomElements(1, list, exceptions, true, false);
+        ArrayList<T> elements = getRandomElements(1, list, exceptions, null, true, false);
         return elements == null ? null : elements.get(0);
     }
     
@@ -209,20 +209,21 @@ public class RandomHelper {
      * @return Picked items - returns null if input list is null or empty.
      */
     public static <T> ArrayList<T> getRandomElements(final int numberOfElements, final List<T> list, final boolean uniquePick) {
-        return getRandomElements(numberOfElements, list, null, uniquePick, false);
+        return getRandomElements(numberOfElements, list, null, null, uniquePick, false);
     }
     
     /**
      * Retrieves random element/s from a list of generic type instances.
-     * Returns null if too few elements to satisfy 
+     * Returns null if too few elements to satisfy (and allowLessPicks set to false).
      * @param numberOfElements Number of elements to be retrieved
      * @param list List of generic type instances to pick from
      * @param exceptions List of String elements to exclude from picking
+     * @param permissibleClass Class of items contained in input list from which random items are drawn (if input list embeds type hierarchy)
      * @param uniquePick Indicates if only unique elements should be picked
-     * @param allowLessPicks Indicates if fewer elements than numberOfElements are permissible
-     * @return Picked items - returns null if input list is null or empty.
+     * @param allowLessPicks Indicates if fewer elements than numberOfElements are permissible (if the input list does not have enough items)
+     * @return Picked items - returns null if input list is null or empty, or has too few items to satisfy number of requested picks (unless allowLessPicks is set to true).
      */
-    public static <T> ArrayList<T> getRandomElements(final int numberOfElements, final List<T> list, final List<T> exceptions, final boolean uniquePick, final boolean allowLessPicks) {
+    public static <T> ArrayList<T> getRandomElements(final int numberOfElements, final List<T> list, final List<T> exceptions, final Class permissibleClass, final boolean uniquePick, final boolean allowLessPicks) {
         if(random == null) {
             throw new RuntimeException("RandomHelper: Random Number Generator not assigned.");
         }
@@ -236,50 +237,65 @@ public class RandomHelper {
         ArrayList<T> filteredList = new ArrayList<>();
         
         if(exceptions == null || exceptions.isEmpty()) {
-            //if nothing to filter, just copy
+            // if nothing to filter, just copy
             filteredList.addAll(list);
         } else {
-            //check for filtered items
+            // check for filtered items
             HashSet<T> excps = new HashSet<T>(exceptions);
             
-            for(int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {
                 if(!excps.contains(list.get(i))) {
                     filteredList.add(list.get(i));
                 }
             }
         }
+
+        // Check for permissible class type (e.g., if list contains typeX that consists of subtypeY and subtypeZ, filters on subtype)
+        if(permissibleClass != null) {
+            for (int i = 0; i < filteredList.size(); i++) {
+                if (!filteredList.get(i).getClass().equals(permissibleClass)) {
+                    filteredList.remove(i);
+                    i--;
+                }
+            }
+        }
         
         if(filteredList.size() < numberOfElements) {
+            if (allowLessPicks) {
+                // If less elements are allowed, return all relevant ones, ...
+                return filteredList;
+            }
+            // ... else return null
             //throw new RuntimeException("Too few elements in list (" + filteredList.size() + ") to satisfy requested items (" + numberOfElements + ").");
             return null;
-        } else if(filteredList.size() == numberOfElements) {
+        } else if (filteredList.size() == numberOfElements) {
             return filteredList;
         }
         
-        //Pick first item
+        // Pick first item
         Integer item = random.nextInt(filteredList.size());
         result.add(filteredList.get(item));
         
-        //model unique pick (keep track of chosen ints)
+        // Model unique pick (keep track of chosen ints)
         HashSet<Integer> uniqueVals = null;
-        if(uniquePick) {
+        if (uniquePick) {
             uniqueVals = new HashSet<>();
             uniqueVals.add(item);
         }
         
-        //Do the actual picking
-        while(result.size() < numberOfElements) {
+        // Do the actual picking
+        while (result.size() < numberOfElements) {
             item = random.nextInt(filteredList.size());
             
-            if(uniquePick && !uniqueVals.contains(item)) {
-                //check whether item has been picked before
+            if (uniquePick && !uniqueVals.contains(item)) {
+                // Check whether item has been picked before
                 result.add(filteredList.get(item));
                 uniqueVals.add(item);
-            } else if(!uniquePick) {
-                //if not necessarily unique, just add
+            } else if (!uniquePick) {
+                // If not necessarily unique, just add
                 result.add(filteredList.get(item));
             }
-            //item already contained
+            // item already contained
         }
         
         return result;

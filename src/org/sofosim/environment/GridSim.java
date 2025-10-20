@@ -136,7 +136,7 @@ public abstract class GridSim extends SimState {
 	
 	/**
 	 * Specifies filename used for stdout/stderr redirection 
-	 * (see {@link #redirectStdOutAndStdErr(boolean)}).
+	 * (see {@link #redirectStdOutAndStdErr(boolean, boolean)}).
 	 * @param filename Filename for outfile
 	 */
 	public void setStdOutErrOutfile(String filename){
@@ -299,7 +299,7 @@ public abstract class GridSim extends SimState {
 	}
 	
 	/**
-	 * Sets the StdOut/StdErr redirection filename. In order to redirect, activate {@link #redirectStdOutStdErr}.
+	 * Sets the StdOut/StdErr redirection filename. In order to redirect, activate {@link #redirectStdOutAndStdErr}.
 	 * @param filename Filename to be used. If null or "", system uses default name {@link #stdOutErrOutfile}.
 	 */
 	public void setRedirectStdOutStdErrFilename(String filename){

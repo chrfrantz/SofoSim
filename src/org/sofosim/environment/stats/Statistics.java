@@ -434,7 +434,7 @@ public abstract class Statistics implements Steppable {
     /**
      * First round to periodic activities (graphs, data collection, custom method) 
      * apart from periodic scheduling to provide snapshot of initial setup 
-     * (should be run once everything is initialized, e.g. round 1).
+     * (should be run once everything is initialized, e.g., round 1).
      * This is only considered once. After that only the periodically 
      * scheduled activities are run (every x rounds relative to 0).
      * -1 deactivates initial run.
