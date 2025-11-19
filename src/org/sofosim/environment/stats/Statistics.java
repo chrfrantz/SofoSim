@@ -1275,8 +1275,8 @@ public abstract class Statistics implements Steppable {
                     //only check for updating of graphs if not already activated based on tuples
                     if(UPDATE_CHARTS_EVERY_X_ROUNDS == -1){
                         updateGraphsThisRound = true;
-                    } else if(UPDATE_CHARTS_EVERY_X_ROUNDS != -1
-                            && (sim.schedule.getSteps() % UPDATE_CHARTS_EVERY_X_ROUNDS == 0)){
+                    } else if(UPDATE_CHARTS_EVERY_X_ROUNDS != -1 &&
+                             (sim.schedule.getSteps() % UPDATE_CHARTS_EVERY_X_ROUNDS == 0)){
                         updateGraphsThisRound = true;
                     } else {
                         updateGraphsThisRound = false;
@@ -2148,7 +2148,7 @@ public abstract class Statistics implements Steppable {
     }
     
     /**
-     * Checks for added data series in all charts and adds them missing ones
+     * Checks for added data series in all charts and adds the missing ones
      * to the chart (processed during every Statistics step).
      */
     protected void checkForChangedDataSeries(){
@@ -4171,6 +4171,16 @@ public abstract class Statistics implements Steppable {
         if(MTRuntime.getAgentConsoleOutputLevel() > AgentConsoleOutputLevels.ERROR){
             System.out.println(PREFIX + outputToPrint);
         }
+    }
+
+    /**
+     * Prevents data loss at shut down by printing all charts one last time.
+     */
+    public void shutdown() {
+        // Ensure data series are updated before printing
+        checkForChangedDataSeries();
+        // Print all graphs
+        printAllGraphs();
     }
     
 }

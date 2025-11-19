@@ -347,10 +347,18 @@ public abstract class GridSim extends SimState {
 	public boolean showSocialForcesGraphUiInSingleFrame(){
 		return this.forceGraphUiInSingleFrame;
 	}
-	
+
+	/**
+	 * Shuts down simulation platform orderly. Updates and prints charts one final time,
+	 * before shutting down micro-agents and scheduler.
+	 * Use this method for orderly shutdown of platform.
+	 */
 	@Override
 	public void finish() {
 		super.finish();
+		// Print stats one last time
+		getStatistics().shutdown();
+		// Shut down agents
 		MTConnector.shutdown();
 		if(stats != null){
 			stats.resetStats();
@@ -361,6 +369,8 @@ public abstract class GridSim extends SimState {
 		}
 		PositionSaver.clearAllRegisteredWindows();
 		schedule.reset();
+		// Shut down MASON side
+		kill();
 	}
 
 }
