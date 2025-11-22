@@ -1476,8 +1476,17 @@ public abstract class Statistics implements Steppable {
     /**
      * Holds all registered charts with identifier and map of respective data series.
      */
-    public LinkedHashMap<String,ChartDataSeriesMap> chartDataMap = new LinkedHashMap<String,ChartDataSeriesMap>();
-    
+    private LinkedHashMap<String,ChartDataSeriesMap> chartDataMap = new LinkedHashMap<String,ChartDataSeriesMap>();
+
+    /**
+     * Returns the internal map of all registered charts.
+     * Use with caution, since you can directly retrieve and manipulate charts.
+     * @return
+     */
+    public LinkedHashMap<String,ChartDataSeriesMap> getChartDataMap() {
+        return chartDataMap;
+    }
+
     /**
      * Removes all data series from all charts (e.g. if memory consumption rises).
      */
@@ -2683,15 +2692,15 @@ public abstract class Statistics implements Steppable {
     
     /**
      * Builds a file name that complies with current simulation 
-     * settings (ie. global path) and includes user-specified 
+     * settings (i.e., global path) and includes user-specified
      * elements. Optionally, round information is included as 
      * well as a trailing String.
      * Offers greatest flexibility in creating custom filenames.
-     * @param coreName Pure (i.e. without rounds etc.) filename without ending
+     * @param coreName Pure (i.e., without rounds etc.) filename without ending
      * @param includeRounds Indicates if round information is included (if global switch {@link #considerRoundsInFilenameGeneration} is activated)
      * @param ending An optional trailing String
-     * @param includeGlobalSubfolder Indicates if constructed name should include global subfolder for simulation instance (i.e. full file path relative to project directory)
-     * @return
+     * @param includeGlobalSubfolder Indicates if constructed name should include global subfolder for simulation instance (i.e., full file path relative to project directory)
+     * @return Generate filename as string
      */
     public String buildFileNameManually(String coreName, boolean includeRounds, String ending, boolean includeGlobalSubfolder){
         String str = outFilePrefix + "_" + coreName;

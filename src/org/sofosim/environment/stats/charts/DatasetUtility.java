@@ -433,7 +433,7 @@ public class DatasetUtility {
 						stats.setupChart(entry.getKey(), 
 								entry.getValue().xLabel == null ? Stats.ROUNDS : entry.getValue().xLabel, 
 								entry.getValue().yLabel == null ? entry.getKey() : entry.getValue().yLabel);
-						ChartDataSeriesMap map = stats.chartDataMap.get(entry.getKey());
+						ChartDataSeriesMap map = stats.getChartDataMap().get(entry.getKey());
 						map.setDataSeries(entry.getValue());
 					}
 					stats.createCharts();
@@ -506,7 +506,7 @@ public class DatasetUtility {
 			}
 			
 		});
-		//derived from http://www.exampledepot.8waytrips.com/egs/javax.swing.filechooser/ChgEvent.html
+		// derived from http://www.exampledepot.8waytrips.com/egs/javax.swing.filechooser/ChgEvent.html
 		ui.addPropertyChangeListener(new PropertyChangeListener() {
 		    public void propertyChange(PropertyChangeEvent evt) {
 		        if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY
@@ -538,12 +538,6 @@ public class DatasetUtility {
 		        }
 		    }
 		}) ;
-		
-		//JFrame chooserFrame = new JFrame();
-		//chooserFrame.add(ui, BorderLayout.SOUTH);
-		//chooserFrame.set
-		//chooserFrame.pack();
-		//chooserFrame.setVisible(true);
 		
 		int ret = ui.showOpenDialog(null);
 		if(ret == JFileChooser.APPROVE_OPTION){
@@ -610,7 +604,7 @@ public class DatasetUtility {
 					JPanel dialogPanel = new JPanel();
 					//can contain different types
 					ArrayList framesAndCharts = new ArrayList();
-					framesAndCharts.addAll(stats.chartDataMap.keySet());
+					framesAndCharts.addAll(stats.getChartDataMap().keySet());
 					framesAndCharts.addAll(stats.getFramesRegisteredForPrinting());
 					//register in combobox
 					final JComboBox cmbCharts = new JComboBox(framesAndCharts.toArray());

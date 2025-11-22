@@ -13,6 +13,7 @@ import org.sofosim.environment.stats.Statistics;
 import org.sofosim.forceLayout.IndivWeightProvider;
 import org.sofosim.graph.GraphHandler;
 import org.sofosim.nadico.CommunicationSpace;
+import org.sofosim.util.TimeHelper;
 import sim.display.Console;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous3D;
@@ -348,6 +349,19 @@ public abstract class GridSim extends SimState {
 		return this.forceGraphUiInSingleFrame;
 	}
 
+
+	/**
+	 * Starts simulation. Initializes instantiation of time (for time tracking), before calling
+	 * top-level scheduling facilities to start simulation.
+	 */
+	@Override
+	public void start() {
+		// Initialize timer
+		System.out.println(PREFIX + TimeHelper.startTime());
+		// Start MASON simulation
+		super.start();
+	}
+
 	/**
 	 * Shuts down simulation platform orderly. Updates and prints charts one final time,
 	 * before shutting down micro-agents and scheduler.
@@ -355,6 +369,9 @@ public abstract class GridSim extends SimState {
 	 */
 	@Override
 	public void finish() {
+		// Print duration of execution
+		System.out.println(PREFIX + "Shutdown initiated: " + TimeHelper.stopTime());
+		// Terminate MASON scheduling (internally calls kill())
 		super.finish();
 		// Print stats one last time
 		getStatistics().shutdown();
@@ -368,9 +385,8 @@ public abstract class GridSim extends SimState {
 			graphHandler.shutdown();
 		}
 		PositionSaver.clearAllRegisteredWindows();
+		// Reset scheduler completely
 		schedule.reset();
-		// Shut down MASON side
-		kill();
 	}
 
 }
