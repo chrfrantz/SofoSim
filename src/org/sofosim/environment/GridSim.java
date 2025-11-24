@@ -357,7 +357,7 @@ public abstract class GridSim extends SimState {
 	@Override
 	public void start() {
 		// Initialize timer
-		System.out.println(PREFIX + TimeHelper.startTime());
+		System.out.println(System.lineSeparator() + PREFIX + TimeHelper.startTime() + System.lineSeparator());
 		// Start MASON simulation
 		super.start();
 	}
@@ -370,7 +370,7 @@ public abstract class GridSim extends SimState {
 	@Override
 	public void finish() {
 		// Print duration of execution
-		System.out.println(PREFIX + "Shutdown initiated: " + TimeHelper.stopTime());
+		System.out.println(System.lineSeparator() + PREFIX + "Shutdown initiated: " + TimeHelper.stopTime());
 		// Terminate MASON scheduling (internally calls kill())
 		super.finish();
 		// Print stats one last time
